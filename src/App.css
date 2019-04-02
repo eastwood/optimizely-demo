@@ -25,6 +25,11 @@
   text-align: left;
 }
 
+.page-container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
 .App-link {
   color: #61dafb;
 }

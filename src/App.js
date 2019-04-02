@@ -26,10 +26,15 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
         </header>
         <div className="App-container">
-          <h1>Welcome to the nib optimizely training {this.state.name}!</h1>
-          <hr/>
-          <h2>First Step</h2>
-          <p>The above name is generated from the API. The SDK is installed on the API serving the content. See if you can change the messaging and/or font-colour based on a variation.</p>
+          <h1 style={{textAlign: "center"}}>Welcome to the nib optimizely training {this.state.name}!</h1>
+          <div className="page-container">
+            <h2>First Step</h2>
+            <hr/>
+            <p>The above name is generated from the API. The SDK is installed on the API serving the content. See if you can change the messaging and/or font-colour based on a variation.</p>
+            <h2>Second Step</h2>
+            <hr/>
+            <p>Test</p>
+          </div>
         </div>
       </div>
     );
