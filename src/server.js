@@ -1,13 +1,16 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-// const optimizely = require('@optimizely/optimizely-sdk');
+const rp = require('request-promise');
+const optimizely = require('@optimizely/optimizely-sdk');
+
+let optimizelyClientInstance = null;
+
+const getDataFile = async () => {
+  return rp.get('https://cdn.optimizely.com/datafiles/NcSpoEyxyL3SQqLgvwdPZM.json');
+}
 
 const app = express();
-
-// Instantiate an Optimizely client
-// const datafile = null;
-// const optimizelyClientInstance = optimizely.createInstance({ datafile: datafile });
 
 const userMiddleware = (req, res, next) => {
   let userId = req.headers['x-user-id'];
@@ -25,17 +28,10 @@ const variationMiddleware = (req, res, next) => {
 
   const enabled = false;
   const min_price = 10;
-  const variation = 'control';
-
-  // const variation = optimizelyClientInstance.activate('experiment', userId); // we pay for this call
-  // Evaluate a feature flag and a variable
-  // const enabled = optimizelyClientInstance.isFeatureEnabled('price_filter', userId);
-  // const min_price = optimizelyClientInstance.getFeatureVariableInteger('price_filter', 'min_price', userId);
 
   req.user.optimizely = {
     enabled,
-    min_price,
-    variation
+    min_price
   }
 
   next();
@@ -50,12 +46,27 @@ app.get('/api/v1/hello', optimizelyMiddleware, (req, res) => {
   const userId = req.user.id;
   const experiment = req.user.optimizely;
 
+  const attributes = {
+    age: 60
+  };
+
+  const variation = optimizelyClientInstance.activate('clint-ab-test-demo', userId, attributes);
+  if (variation === 'control') {
+    console.log('Control');
+    // execute code for control
+  } else if (variation === 'experiment') {
+    console.log('Experiment');
+  } else {
+    console.log('Something fell through');
+  }
+  // Evaluate a feature flag and a variable
+
   setTimeout(() => {
     // optimizelyClientInstance.track('purchased', userId);
     res.status(200).json({
       name: 'James',
       id: userId,
-      experiment
+      experiment,
     });
   }, 1000)
 });
@@ -64,4 +75,12 @@ app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, '../build', 'index.html'));
 });
 
-app.listen(9000);
+
+async function startServer() {
+  const datafile = await getDataFile();
+  optimizelyClientInstance = optimizely.createInstance({ datafile });
+  app.listen(9000);
+}
+
+startServer();
+
