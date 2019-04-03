@@ -26,12 +26,16 @@ const userMiddleware = (req, res, next) => {
 
 const variationMiddleware = (req, res, next) => {
 
+  const userId = req.user.id;
   const enabled = false;
   const min_price = 10;
+  const attributes = { age: 60 };
+  const variation = optimizelyClientInstance.activate('clint-ab-test-demo', userId, attributes);
 
   req.user.optimizely = {
     enabled,
-    min_price
+    min_price,
+    variation
   }
 
   next();
@@ -46,19 +50,6 @@ app.get('/api/v1/hello', optimizelyMiddleware, (req, res) => {
   const userId = req.user.id;
   const experiment = req.user.optimizely;
 
-  const attributes = {
-    age: 60
-  };
-
-  const variation = optimizelyClientInstance.activate('clint-ab-test-demo', userId, attributes);
-  if (variation === 'control') {
-    console.log('Control');
-    // execute code for control
-  } else if (variation === 'experiment') {
-    console.log('Experiment');
-  } else {
-    console.log('Something fell through');
-  }
   // Evaluate a feature flag and a variable
 
   setTimeout(() => {
@@ -66,7 +57,7 @@ app.get('/api/v1/hello', optimizelyMiddleware, (req, res) => {
     res.status(200).json({
       name: 'James',
       id: userId,
-      experiment,
+      experiment
     });
   }, 1000)
 });
