@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const optimizely = require('@optimizely/optimizely-sdk');
+// const optimizely = require('@optimizely/optimizely-sdk');
+
 const app = express();
 
 // Instantiate an Optimizely client
@@ -10,7 +11,6 @@ const app = express();
 
 const userMiddleware = (req, res, next) => {
   let userId = req.headers['x-user-id'];
-  console.log(userId);
   if (!userId) {
     userId = Math.floor(Math.random() * 1000);
   }
