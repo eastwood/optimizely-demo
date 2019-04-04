@@ -31,11 +31,13 @@ const variationMiddleware = (req, res, next) => {
   const min_price = 10;
   const attributes = { age: 60 };
   const variation = optimizelyClientInstance.activate('clint-ab-test-demo', userId, attributes);
+  const isEnabled = optimizelyClientInstance.isFeatureEnabled('hero-text', userId, attributes);
 
   req.user.optimizely = {
     enabled,
     min_price,
-    variation
+    variation,
+    isEnabled
   }
 
   next();
